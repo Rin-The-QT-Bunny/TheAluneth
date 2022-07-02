@@ -28,22 +28,16 @@ class ChainNode(object):
     def __str__(self): return "Chain Node: (prev = %s,next = %s,value = %s)" % (self.prev.content,self.next.content,self.content)
 
     def show(self): 
-        if self.prev is None:
-            return "| %s-> %s" % (self.value,self.next.value)
-        if self.next is None:
-            return "%s-> %s |" % (self.prev.value,self.value)
-        return "%s-> %s ->%s" % (self.prev.show(),self.value,self.next.show())
+        if self.prev is None and self.next is None:
+            return self.value
+        if self.prev is None and self.next is not None:
+            return "|%s->" % self.value
+        if self.prev is not None and self.next is None:
+            return "%s|" % self.value
+        return self.prev.show() + "%s->%s" % (self.value,self.next.show())
     
     def __eq__(self,o): return isinstance(o,ChainNode) and self.value == self.value
 
     def __ne__(self,o): return not o == self
 
     def attach_to(self,next): self.next = next;next.prev = self
-        
-c1 = ChainNode("c1")
-c2 = ChainNode("c2")
-c3 = ChainNode("c3")
-
-c1.attach_to(c2)
-c2.attach_to(c3)
-print(c1.show())
