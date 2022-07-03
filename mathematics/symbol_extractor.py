@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from eluneth.DSL.SymbolicDSL import Equation, Function, Expression, Variable, Value, Rational
+from aluneth.mathematics.symbol_types import Equation, Function, Expression, Variable, Value, Rational
 import sympy
 import re
 
