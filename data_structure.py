@@ -1,3 +1,4 @@
+
 class Stack(object):
     def __init__(self,top = 0):
         self.top_pointer = top
@@ -41,3 +42,47 @@ class ChainNode(object):
     def __ne__(self,o): return not o == self
 
     def attach_to(self,next): self.next = next;next.prev = self
+
+import networkx as nx
+import numpy as np
+
+class Graph(object):
+    def __init__(self,nodes,edges,weights = None):
+        self.nodes = nodes
+        self.edges = edges
+        self.weights = weights
+
+    def __str__(self):
+        return "Graph: " + "\n".join(self.nodes)
+
+    def show(self,flag = False):
+        F = nx.Graph()
+        for node in self.nodes: F.add_node(node)
+        return 0
+
+    def build_edges(self):
+        edges = {}
+        N = len(self.nodes)
+        for i in range(N):
+            for j in range(N):
+                if self.edges[i][j] == 1:
+                    edges[self.nodes[i]] = self.nodes[j]
+        return edges
+
+    def build_matrix(self):
+        N = len(self.nodes)
+        connection = np.zeros([N,N])
+        for i in range(N):
+            from_node = self.nodes[i]
+            to_node = self.weights[from_node]
+            j = self.nodes.index(to_node)
+            connection[i][j] = 1
+        return connection
+
+    def __eq__(self,o):
+        if self.weights is None:
+            return isinstance(o,self) and self.nodes == o.nodes and self.edges == o.edges 
+        return isinstance(o,self) and self.nodes == o.nodes and self.edges == o.edges and self.weights == o.weights
+    
+    def __ne__(self,o):
+        return not o == self
