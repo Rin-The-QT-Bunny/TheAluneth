@@ -13,4 +13,10 @@ def images2data(images): return
 
 def load_image(path,normalize = True):
     if normalize: return torch.tensor(np.array(Image.open(path))).float()/256
-    return torch.tensor(np.array(Image.open(path))).float()
+    return torch.tensor(np.array(Image.open(path))).float().unsqueeze(0)
+
+def combine_images(images):
+    output = images2data(images[0:1])
+    for i in range(len(images) - 1):
+        output = torch.cat([output,images[i+1:i+2]],0)
+    return output
