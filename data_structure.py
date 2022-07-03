@@ -86,3 +86,13 @@ class Graph(object):
     
     def __ne__(self,o):
         return not o == self
+
+class BinaryTree(object):
+    def __init__(self):
+        super()
+
+    def __eq__(self,o):
+        return o == self
+    
+    def __ne__(self,o):
+        return not o == self
