@@ -2,7 +2,7 @@ import random
 import numpy as np
 import torch
 import torch.nn as nn
-from aluneth.rinlearn.functional_net import *
+from aluneth.rinlearn.nn.functional_net import *
 
 class VAE(nn.Module):
     def __init__(self):

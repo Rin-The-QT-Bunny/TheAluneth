@@ -3,6 +3,17 @@ from aluneth.mathematics.symbol_types import Equation, Function, Expression, Var
 import sympy
 import re
 
+def type_correct_sentence(sentence):
+    expressions = extract_formal_elements(sentence, cast = False)
+    output_sentence = ""
+    last_pointer = 0
+    for expression in expressions:
+        e = str(expression)
+        loc_expression = sentence.index(e)
+        output_sentence += sentence[last_pointer:loc_expression]
+        output_sentence +=  cast_formal_element(expression).__class__.__name__ + " "
+        last_pointer = loc_expression + 1 + len(e)
+    return output_sentence
 
 def is_numeric(string):
     return all([x.isnumeric() or x == "." for x in string] + [string.count(".") <= 1])
