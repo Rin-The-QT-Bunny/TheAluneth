@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from eluneth.mornet.FCNet import *
+from aluneth.rinlearn.nn.functional_net import *
 from eluneth.datatype.version_space import *
 
 
