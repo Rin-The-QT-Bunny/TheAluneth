@@ -1,11 +1,13 @@
 import torch
-import torchvision.transforms as tranforms
+from torchvision import transforms
 
 import numpy as np
 
 from PIL import Image
 
-def resize(img,resolution): return 
+import matplotlib.pyplot as plt
+
+def resize(img,resolution): return transforms.Resize(resolution)(img)
 
 def data2images(torch_data): return torch_data.permute([0,2,3,1])
 
@@ -20,3 +22,11 @@ def combine_images(images):
     for i in range(len(images) - 1):
         output = torch.cat([output,images[i+1:i+2]],0)
     return output
+
+def visualize_images(images,cols = 3):
+    num_images = images.shape[0]
+    rows = num_images / cols
+    for i in range(num_images):
+        plt.subsplot(rows,cols,i + 1)
+        plt.imshow(images[i])
+    return 0
