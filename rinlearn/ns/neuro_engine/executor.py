@@ -1,4 +1,3 @@
-from sklearn.linear_model import PassiveAggressiveClassifier
 import torch
 import torch.nn as nn
 from eluneth.datatype.version_space import *
