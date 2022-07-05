@@ -9,7 +9,7 @@ import shapely
 from shapely.ops import substring
 
 
-CANVAS_SIZE = 16
+CANVAS_SIZE = 6
 
 class GeoclideanPoint:
     def __init__(self, name, obj_constraints):
