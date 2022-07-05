@@ -92,3 +92,12 @@ class ConvLayer(nn.Module):
         x = self.fc(x)
         return x
 
+class SIREN(nn.Module):
+    def __init__(self,input_dim):
+        self.shift = FCBlock(128,3,input_dim,1)
+        self.frequency = FCBlock(128,3,input_dim,1)
+    def forward(self,x):
+        beta = torch.relu(self.shift(x) * 10)
+        gammar = torch.relu(self.frequency(x) * 10)
+        x = torch.sin(gammar * x + beta)
+        return x
