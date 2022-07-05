@@ -12,7 +12,7 @@ concept = [
 
 for i in range(3):
     print("exe",i)
-    generate_concept(concept, mark_points=False, show_plots=False,path = "images/output.png")
+    generate_concept(concept, mark_points=False, show_plots=True,path = "images/output.png")
 
 
 concept = [
