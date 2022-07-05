@@ -14,7 +14,7 @@ concept = [
 
 
 for i in range(3):
-    generate_concept(concept, mark_points=False, show_plots=True)
+    generate_concept(concept, mark_points=False, show_plots=True,path ="output")
 
 
 concept = [
@@ -24,4 +24,4 @@ concept = [
 ]
 
 for i in range(3):
-    generate_concept(concept, mark_points=False, show_plots=True)
+    generate_concept(concept, mark_points=False, show_plots=True,path = "output")
