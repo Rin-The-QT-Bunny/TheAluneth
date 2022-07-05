@@ -14,3 +14,16 @@ class VG_NSL(nn.Module):
         if isinstance(x,list):
             x = combine_tensors(x)
         return x
+
+class AlignLoss(nn.Module):
+    def __init__(self,v_dim,a_dim):
+        super().__init__()
+        self.unitLoss = nn.TripletMarginLoss(margin = 0.5,reduction = "mean")
+        self.matcher = nn.Parameter(torch.randn([v_dim,a_dim]))
+
+    def match(self,v,c):
+        return torch.dot(self.matcher * v , c)
+    
+    def forward(self,V,C):
+        workingLoss = 0
+        workingLoss = workingLoss + self.unitLoss(self.match())
