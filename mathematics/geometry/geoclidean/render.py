@@ -42,3 +42,4 @@ def plot_intersection(ax, intersection):
         
 def save_plot(path):
     plt.savefig(path)
+    

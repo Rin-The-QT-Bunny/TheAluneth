@@ -11,10 +11,10 @@ concept = [
     'l3 = line(p2(), p3()))'
 ]
 
-plt.ion()
+
 
 for i in range(3):
-    generate_concept(concept, mark_points=False, show_plots=True,path = img_path)
+    generate_concept(concept, mark_points=False, show_plots=True)
 
 
 concept = [
@@ -24,4 +24,4 @@ concept = [
 ]
 
 for i in range(3):
-    generate_concept(concept, mark_points=False, show_plots=True,path = img_path)
+    generate_concept(concept, mark_points=False, show_plots=True)
