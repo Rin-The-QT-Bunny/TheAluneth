@@ -1,5 +1,7 @@
 from aluneth.mathematics.geometry.geoclidean.euclidean_primitives import *
 
+img_path = "/Users/melkor/miniforge3/envs/Melkor/lib/python3.9/site-packages/aluneth/mathematics/geometry/geoclidean/images"
+
 
 concept = [
     'l1 = line(p1(), p2())',
@@ -11,8 +13,7 @@ concept = [
 
 
 for i in range(3):
-    print("exe",i)
-    generate_concept(concept, mark_points=False, show_plots=True,path = "images/output.png")
+    generate_concept(concept, mark_points=False, show_plots=True,path = img_path)
 
 
 concept = [
@@ -22,4 +23,4 @@ concept = [
 ]
 
 for i in range(3):
-    generate_concept(concept, mark_points=False, show_plots=False)
+    generate_concept(concept, mark_points=False, show_plots=True,path = img_path)

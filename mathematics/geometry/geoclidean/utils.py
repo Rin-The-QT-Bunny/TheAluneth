@@ -5,7 +5,7 @@ from shapely.geometry import Point, Polygon,LineString,MultiPoint,MultiLineStrin
 
 
 def action_create_line(point_a,point_b):
-    line = LineString([(point_a.x,point_b.py),(point_b.x,point_b.y)])
+    line = LineString([(point_a.x,point_b.y),(point_b.x,point_b.y)])
     return line
 
 def action_create_circle(point_center,point_c):

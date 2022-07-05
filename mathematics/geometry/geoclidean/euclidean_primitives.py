@@ -1,28 +1,13 @@
-from Reflection.program import *
-from Reflection.types import *
-from Reflection.utils import *
-
-tpoint = baseType("tpoint")
-tline = baseType("tline")
-tcircle = baseType("tcircle")
-
-def make_point():return 0
-
-def realize_point(x,y): return x,y
-
-euc_realize_point = Primitive("euc_realize_point",arrow(treal,treal,tpoint),realize_point)
-
-import random
-import numpy as np
-
 from aluneth.mathematics.geometry.geoclidean.render import *
 from aluneth.mathematics.geometry.geoclidean.utils import *
+import random
+import os
+import re
+import numpy as np
 
 import shapely
 from shapely.ops import substring
 
-import os
-import re
 
 CANVAS_SIZE = 16
 
@@ -212,7 +197,7 @@ def generate_concept(rules, mark_points=False, steps_path=None, path=None, show_
             if visibility_test(all_viewable_objs):
                 if steps_path:
                     save_steps_joint(all_viewable_objs, steps_path)
-                if path is not None:
+                if path:
                     save_plot(path)
                     
                 i += 1
