@@ -208,5 +208,7 @@ def generate_concept(rules, mark_points=False, steps_path=None, path=None, show_
                 plt.close()
         except:
             plt.close()
-            continue 
+            continue
+        plt.pause(5) 
+        plt.cla()
             
