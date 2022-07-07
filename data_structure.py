@@ -96,3 +96,106 @@ class BinaryTree(object):
     
     def __ne__(self,o):
         return not o == self
+
+class FuncNode:
+    def __init__(self,token):
+        self.token = str(token)
+        self.content = token
+        self.children = []
+        self.father = []
+        self.prior_length = None
+        self.function = True
+        self.type = "Function"
+        self.isRoot = False
+    
+    def __str__(self):
+        return_str = ""
+        return_str += self.token
+        if (self.function):
+            return_str += "("
+        for i in range(len(self.children)):
+            arg = self.children[i]
+            # perform the unlimited sequence processing
+            return_str += arg.__str__()
+            max_length = len(self.children)
+            if (self.prior_length != None):
+                max_length = len(self.children)
+            if (i < max_length -1):
+                return_str += ","
+
+        if (self.function):
+            return_str += ")"
+        return return_str
+    
+    def add_child(self,version_space):
+        self.children.append(version_space)
+        
+    def add_token(self,token):
+        vs = FuncNode(token)
+        self.children.append(vs)
+    
+    def length(self):
+        score = 0
+        if (len(self.children) > 0):
+            for child in self.children:
+                score += child.length()
+        return 1 + score
+
+
+def find_bp(inputs):
+    loc = -1
+    count = 0
+    for i in range(len(inputs)):
+        e = inputs[i]
+        if (e == "("):
+            count += 1
+        if (e == ")"):
+            count -= 1
+        if (count == 0 and e == ","):
+            return i
+    return loc
+
+def break_braket(program):
+    try:
+        loc = program.index("(")
+    except:
+        loc = -1
+    if (loc == -1):
+        return program,-1
+    token = program[:loc]
+    paras = program[loc+1:-1]
+    return token,paras        
+
+def break_paras(paras):
+    try:
+        loc = find_bp(paras)
+    except:
+        loc = -1
+    if (loc == -1):
+        return paras,True
+    token = paras[:loc]
+    rest = paras[loc+1:]
+    return token,rest
+
+def to_parameters(paras):
+    flag = True
+    parameters = []
+    while (flag):
+        token,rest = break_paras(paras)
+        if (rest == True):
+            flag = False
+        parameters.append(toFuncNode(token))
+        paras = rest
+    return parameters
+
+def toFuncNode(program):
+    token,paras = break_braket(program)
+
+    curr_head = FuncNode(token)
+    if (paras == -1):
+        curr_head.function = False
+        curr_head.children = []
+    else:
+        children_paras = to_parameters(paras)
+        curr_head.children = children_paras
+    return curr_head

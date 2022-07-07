@@ -1,8 +1,8 @@
-from eluneth.neuro_engine.concept_structure import *
-from eluneth.neuro_engine.primitives import *
-from eluneth.neuro_engine.executor import *
-from eluneth.datatype.version_space import *
-from eluneth.utils import *
+from aluneth.rinlearn.ns.neuro_engine.concept_structure import *
+from aluneth.rinlearn.ns.neuro_engine.primitives import *
+from aluneth.rinlearn.ns.neuro_engine.executor import *
+from aluneth.data_structure import *
+from aluneth.utils import *
 from matplotlib.colors import rgb2hex
 
 # implementations of DSL operators
@@ -170,10 +170,10 @@ context = {"objects":nn.Parameter(torch.randn([1,o_dim]))}
 context2 = {"objects":nn.Parameter(torch.randn([1,o_dim]))}
 context3 = {"objects":nn.Parameter(torch.randn([1,o_dim]))}
 
-cp = toVersionSpace("cmeasure(cunique(cfilter(cscene(),cred)),color)")
-cp2 = toVersionSpace("cmeasure(cunique(cfilter(cscene(),cblue)),color)")
-cpm = toVersionSpace("cmeasure(cunique(cscene()),color)")
-cpc = toVersionSpace("cmeasure(cunique(cscene()),category)")
+cp = toFuncNode("cmeasure(cunique(cfilter(cscene(),cred)),color)")
+cp2 = toFuncNode("cmeasure(cunique(cfilter(cscene(),cblue)),color)")
+cpm = toFuncNode("cmeasure(cunique(cscene()),color)")
+cpc = toFuncNode("cmeasure(cunique(cscene()),category)")
 #print(cexe.concept_structure.ObjClassify(EntityBox(torch.randn([1,2]),2),"cblue"))
 
 # detection initiate : torch.autograd.set_detect_anomaly(True)
@@ -194,65 +194,65 @@ def union_context(context1,context2):
     return {"objects":torch.cat(obs,0)}
 
 print("\nSoft Count Test:")
-cp3 = toVersionSpace("ccount(cfilter(cscene(),cred))")
+cp3 = toFuncNode("ccount(cfilter(cscene(),cred))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(dnp(r3["outputs"]),int(0.5 + dnp(r3["outputs"])))
 
-cp3 = toVersionSpace("ccount(cfilter(cscene(),cblue))")
+cp3 = toFuncNode("ccount(cfilter(cscene(),cblue))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(dnp(r3["outputs"]),int(0.5 + dnp(r3["outputs"])))
 
-cp3 = toVersionSpace("ccount(cfilter(cscene(),cball))")
+cp3 = toFuncNode("ccount(cfilter(cscene(),cball))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(dnp(r3["outputs"]),int(0.5 + dnp(r3["outputs"])))
 
-cp3 = toVersionSpace("ccount(cfilter(cscene(),ccube))")
+cp3 = toFuncNode("ccount(cfilter(cscene(),ccube))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(dnp(r3["outputs"]),int(0.5 + dnp(r3["outputs"])))
 
-cp3 = toVersionSpace("ccount(cfilter(cscene(),cgreen))")
+cp3 = toFuncNode("ccount(cfilter(cscene(),cgreen))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(dnp(r3["outputs"]),int(0.5 + dnp(r3["outputs"])))
 
 print("\nMeasurement on three objects:")
-cp3 = toVersionSpace("cmeasure(cunique(cscene()),color)")
+cp3 = toFuncNode("cmeasure(cunique(cscene()),color)")
 r3 = cexe.run(cp3,context)
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cmeasure(cunique(cscene()),color)")
+cp3 = toFuncNode("cmeasure(cunique(cscene()),color)")
 r3 = cexe.run(cp3,context2)
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cmeasure(cunique(cscene()),color)")
+cp3 = toFuncNode("cmeasure(cunique(cscene()),color)")
 r3 = cexe.run(cp3,context3)
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cmeasure(cunique(cscene()),category)")
+cp3 = toFuncNode("cmeasure(cunique(cscene()),category)")
 r3 = cexe.run(cp3,context2)
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cmeasure(cunique(cscene()),category)")
+cp3 = toFuncNode("cmeasure(cunique(cscene()),category)")
 r3 = cexe.run(cp3,context3)
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
 print("\nBoolean Equal Test:")
-cp3 = toVersionSpace("cequal(cmeasure(cunique(cfilter(cscene(),cred)),color),cmeasure(cunique(cfilter(cscene(),cblue)),color))")
+cp3 = toFuncNode("cequal(cmeasure(cunique(cfilter(cscene(),cred)),color),cmeasure(cunique(cfilter(cscene(),cblue)),color))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cequal(cmeasure(cunique(cfilter(cscene(),cred)),color),cmeasure(cunique(cfilter(cscene(),cred)),color))")
+cp3 = toFuncNode("cequal(cmeasure(cunique(cfilter(cscene(),cred)),color),cmeasure(cunique(cfilter(cscene(),cred)),color))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cequal(cmeasure(cunique(cfilter(cscene(),ccube)),color),cmeasure(cunique(cfilter(cscene(),cball)),color))")
+cp3 = toFuncNode("cequal(cmeasure(cunique(cfilter(cscene(),ccube)),color),cmeasure(cunique(cfilter(cscene(),cball)),color))")
 r3 = cexe.run(cp3,union_context(context3,context2))
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
-cp3 = toVersionSpace("cequal(cmeasure(cunique(cfilter(cscene(),cball)),color),cmeasure(cunique(cfilter(cscene(),cball)),color))")
+cp3 = toFuncNode("cequal(cmeasure(cunique(cfilter(cscene(),cball)),color),cmeasure(cunique(cfilter(cscene(),cball)),color))")
 r3 = cexe.run(cp3,union_context(union_context(context3,context2),context))
 print(r3["outputs"],torch.exp(r3["logprobs"]).detach().numpy())
 
 print("\nFilter Test:")
-cp3 = toVersionSpace("cfilter(cscene(),cblue)")
+cp3 = toFuncNode("cfilter(cscene(),cblue)")
 r3 = cexe.run(cp3,union_context(context3,context2))
 print(torch.exp(r3["logprobs"]).detach().numpy())

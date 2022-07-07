@@ -7,7 +7,7 @@ import sys
 def dnp(tensor,gpu = False):
     # detach the tensor from the calculation tree
     if gpu: return tensor.cpu().detach().numpy()
-    return tensor.detach().numpty()
+    return tensor.detach().numpy()
 
 def progress_bar(count, total, status=''):
     bar_len = 60

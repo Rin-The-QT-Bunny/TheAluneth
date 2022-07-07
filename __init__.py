@@ -1,1 +1,0 @@
-print("Come child, Let's wreck havoc")

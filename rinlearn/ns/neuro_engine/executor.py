@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
-from eluneth.datatype.version_space import *
-from eluneth.utils import *
-
+from aluneth.data_structure import *
+from aluneth.utils import *
 class Executor(nn.Module):
     def __init__(self,concepts):
         super().__init__()
@@ -91,8 +90,9 @@ def GroundConcepts(executor,ground_data,lr = 1e-2):
         Loss = 0
         for bind in ground_data:
             context,program,ground_truth = bind["context"],bind["program"],bind["ground_truth"]
-            if program.__class__.__name__ != "VersionSpace":
-                program = toVersionSpace(program)
+            if program.__class__.__name__ != "FuncNode":
+                program = toFuncNode(program)
+
             result = executor.run(program,context)
             outputs,logprobs = result["outputs"],result["logprobs"]
             loss_index = outputs.index(ground_truth)

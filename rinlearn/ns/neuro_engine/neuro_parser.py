@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 from aluneth.rinlearn.nn.functional_net import *
-from eluneth.datatype.version_space import *
-
+from aluneth.data_structure import FuncNode
+import numpy as np
 
 class NeuroDecoder(nn.Module):
     def __init__(self,inputs_dim,DSL):
@@ -44,7 +44,7 @@ class NeuroDecoder(nn.Module):
             flag = False
         self.working_loss = 0
         self.counter = 0
-        root = VersionSpace("Root")
+        root = FuncNode("Root")
         traj = []
         def parse(head,semantics_key,Type):
             if(track):
@@ -58,7 +58,7 @@ class NeuroDecoder(nn.Module):
                 self.counter += 1
             current_operator_name = keys[max_index]
 
-            current_node = VersionSpace(current_operator_name) # create the operator node
+            current_node = FuncNode(current_operator_name) # create the operator node
             current_node.function = args_info[max_index]
             head.children.append(current_node) # attach the node created
             self.working_loss += torch.log(pdf[max_index])
@@ -104,18 +104,18 @@ class Reaver(nn.Module):
     
     def forward(self,x,new_keys,new_vectors):
         x = x.reshape([1,-1])
-        root = VersionSpace("root")
+        root = FuncNode("root")
         self.counter = 0
         self.keys,self.vectors = self.DSL.get_full_operators(new_keys,new_vectors)
         self.loss = 0
         def parse(semantics,node,arg):
             if (self.counter > 100):
-                node.add_child(VersionSpace("NA"))
+                node.add_child(FuncNode("NA"))
                 return 1
             pdf,max_ind = self.pdf_and_index(torch.cat([semantics,arg],-1),self.vectors,True)
             operator_token = self.keys[max_ind]
             
-            working_node = VersionSpace(operator_token)
+            working_node = FuncNode(operator_token)
             if (operator_token in self.DSL.operators):
                 working_node.function = True
             else:
@@ -136,7 +136,7 @@ class Reaver(nn.Module):
     
     def evaluate(self,x,new_keys,new_vectors,target_head):
         x = x.reshape([1,-1])
-        root = VersionSpace("root")
+        root = FuncNode("root")
         self.counter = 0
 
 
@@ -145,13 +145,13 @@ class Reaver(nn.Module):
         self.loss = 0
         def parse(semantics,node,arg,target_head):
             if (self.counter > 100):
-                node.add_child(VersionSpace("NA"))
+                node.add_child(FuncNode("NA"))
                 return 1
 
             pdf,max_ind = self.pdf_and_index(torch.cat([semantics,arg],-1),self.vectors)
             max_ind = self.keys.index(target_head.token)
             operator_token = self.keys[max_ind]
-            working_node = VersionSpace(operator_token)
+            working_node = FuncNode(operator_token)
             if (operator_token in self.DSL.operators):
                 working_node.function = True
             else:
