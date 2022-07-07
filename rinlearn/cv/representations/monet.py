@@ -29,19 +29,22 @@ from aluneth.utils import *
 from aluneth.rinlearn.nn.visual_net import *
 
 class Monet(nn.Module):
-    def __init__(self, conf, height, width):
+    def __init__(self, height, width,channel,base = 128):
         super().__init__()
-        self.conf = conf
-        self.attention = AttentionNet(conf)
-        self.encoder = EncoderNet(height, width)
-        self.decoder = DecoderNet(height, width)
+        self.channel = channel
+        self.attention = AttentionNet(3,base)
+        self.encoder = EncoderNet(height, width,self.channel + 1,base * 2)
+        self.decoder = DecoderNet(height, width,base,self.channel)
         self.beta = 0.5
         self.gamma = 0.25
+        self.base = base
+        
+        
 
     def forward(self, x):
         scope = torch.ones_like(x[:, 0:1])
         masks = []
-        for i in range(self.conf.num_slots-1):
+        for i in range(4-1):
             mask, scope = self.attention(x, scope)
             masks.append(mask)
         masks.append(scope)
@@ -54,7 +57,7 @@ class Monet(nn.Module):
         kl_zs = torch.zeros_like(loss)
         for i, mask in enumerate(masks):
             z, kl_z = self.__encoder_step(x, mask)
-            sigma = self.conf.bg_sigma if i == 0 else self.conf.fg_sigma
+            sigma = 0.2 if i == 0 else 0.8
             p_x, x_recon, mask_pred = self.__decoder_step(x, z, mask, sigma)
             mask_preds.append(mask_pred)
             loss += -p_x + self.beta * kl_z
@@ -80,8 +83,8 @@ class Monet(nn.Module):
     def __encoder_step(self, x, mask):
         encoder_input = torch.cat((x, mask), 1)
         q_params = self.encoder(encoder_input)
-        means = torch.sigmoid(q_params[:, :16]) * 6 - 3
-        sigmas = torch.sigmoid(q_params[:, 16:]) * 3
+        means = torch.sigmoid(q_params[:, :self.base]) * 6 - 3
+        sigmas = torch.sigmoid(q_params[:, self.base:]) * 3
         dist = dists.Normal(means, sigmas)
         dist_0 = dists.Normal(0., sigmas)
         z = means + dist_0.sample()
@@ -92,7 +95,7 @@ class Monet(nn.Module):
 
     def __decoder_step(self, x, z, mask, sigma):
         decoder_output = self.decoder(z)
-        x_recon = torch.sigmoid(decoder_output[:, :3])
+        x_recon = torch.sigmoid(decoder_output[:, :self.channel])
         mask_pred = decoder_output[:, 3]
         dist = dists.Normal(x_recon, sigma)
         p_x = dist.log_prob(x)
@@ -180,5 +183,30 @@ class Sprites(Dataset):
         if self.transform is not None:
             img = self.transform(img)
         return img, self.counts[idx]
-    
-    
+
+from aluneth.rinlearn.cv.utils import *
+
+mnt = Monet(64,64,4,64)
+print(mnt)
+
+
+
+img = load_image("/Users/melkor/miniforge3/envs/Melkor/lib/python3.9/site-packages/aluneth/output.png",True)
+
+img = resize(img,(64,64))
+
+import matplotlib.pyplot as plt
+history = []
+TRAIN_EPOCH = 3000
+optim = torch.optim.RMSprop(mnt.parameters(),lr = 2e-2)
+for epoch in range(TRAIN_EPOCH):
+    optim.zero_grad()
+    out = mnt(img)
+    loss = out["loss"]
+    optim.step()
+    print("epoch :{} loss: {}".format(epoch,dnp(loss)))
+    history.append(dnp(loss))
+    #plt.plot(history)
+    plt.imshow(dnp(out["reconstructions"][0].permute([1,2,0])))
+    plt.pause(0.01)
+    plt.cla()

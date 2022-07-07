@@ -82,10 +82,10 @@ class AttentionNet(nn.Module):
         return mask, new_scope
 
 class EncoderNet(nn.Module):
-    def __init__(self, width, height,latent_dim = 128):
+    def __init__(self, width, height,inchannle = 4,latent_dim = 128):
         super().__init__()
         self.convs = nn.Sequential(
-            nn.Conv2d(4, 64, 3, stride=2),
+            nn.Conv2d(inchannle, 64, 3, stride=2),
             nn.ReLU(inplace=True),
             nn.Conv2d(64, 64, 3, stride=2),
             nn.ReLU(inplace=True),
