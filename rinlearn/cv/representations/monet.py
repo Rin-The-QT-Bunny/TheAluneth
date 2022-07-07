@@ -29,7 +29,7 @@ from aluneth.utils import *
 from aluneth.rinlearn.nn.visual_net import *
 
 class Monet(nn.Module):
-    def __init__(self, height, width,channel,base = 128):
+    def __init__(self, height, width,channel,base = 64):
         super().__init__()
         self.channel = channel
         self.attention = AttentionNet(3,base)
@@ -38,13 +38,13 @@ class Monet(nn.Module):
         self.beta = 0.5
         self.gamma = 0.25
         self.base = base
-        
+        self.num = 4
         
 
     def forward(self, x):
         scope = torch.ones_like(x[:, 0:1])
         masks = []
-        for i in range(4-1):
+        for i in range(self.num-1):
             mask, scope = self.attention(x, scope)
             masks.append(mask)
         masks.append(scope)
@@ -83,7 +83,7 @@ class Monet(nn.Module):
     def __encoder_step(self, x, mask):
         encoder_input = torch.cat((x, mask), 1)
         q_params = self.encoder(encoder_input)
-        means = torch.sigmoid(q_params[:, :self.base]) * 6 - 3
+        means = torch.sigmoid(q_params[:, :self.base]) * 6 - 3 
         sigmas = torch.sigmoid(q_params[:, self.base:]) * 3
         dist = dists.Normal(means, sigmas)
         dist_0 = dists.Normal(0., sigmas)
@@ -102,7 +102,7 @@ class Monet(nn.Module):
         p_x *= mask
         p_x = torch.sum(p_x, [1, 2, 3])
         return p_x, x_recon, mask_pred
-
+    
 
 def print_image_stats(images, name):
     print(name, '0 min/max', images[:, 0].min().item(), images[:, 0].max().item())
@@ -184,29 +184,3 @@ class Sprites(Dataset):
             img = self.transform(img)
         return img, self.counts[idx]
 
-from aluneth.rinlearn.cv.utils import *
-
-mnt = Monet(64,64,4,64)
-print(mnt)
-
-
-
-img = load_image("/Users/melkor/miniforge3/envs/Melkor/lib/python3.9/site-packages/aluneth/output.png",True)
-
-img = resize(img,(64,64))
-
-import matplotlib.pyplot as plt
-history = []
-TRAIN_EPOCH = 3000
-optim = torch.optim.RMSprop(mnt.parameters(),lr = 2e-2)
-for epoch in range(TRAIN_EPOCH):
-    optim.zero_grad()
-    out = mnt(img)
-    loss = out["loss"]
-    optim.step()
-    print("epoch :{} loss: {}".format(epoch,dnp(loss)))
-    history.append(dnp(loss))
-    #plt.plot(history)
-    plt.imshow(dnp(out["reconstructions"][0].permute([1,2,0])))
-    plt.pause(0.01)
-    plt.cla()
