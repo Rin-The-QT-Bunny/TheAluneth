@@ -44,7 +44,7 @@ class Monet(nn.Module):
     def forward(self, x):
         scope = torch.ones_like(x[:, 0:1])
         masks = []
-        for i in range(self.num-1):
+        for i in range(-1):
             mask, scope = self.attention(x, scope)
             masks.append(mask)
         masks.append(scope)
@@ -184,3 +184,13 @@ class Sprites(Dataset):
             img = self.transform(img)
         return img, self.counts[idx]
 
+
+import math
+
+def func(pt,phi,eta,mass):
+    m = 0
+    px = pt * math.cos(phi)
+    py = pt * math.sin(phi)
+    pz = pt * math.sinh(eta)
+    m = math.sqrt(mass ** 2- px**2 - py**2 - pz**2)
+    return m
