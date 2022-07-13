@@ -296,9 +296,9 @@ class ConeConceptStructure(nn.Module):
         if (constant_key == None):
             print("Error: concept key for classification not found")
             return -1
-        gamma = 0.25
+        gamma = 0.2
         tau = 0.1
-        return torch.sigmoid( (torch.cosine_similarity(entity.Semantics(),constant_key.Semantics()) - gamma )/ tau )
+        return torch.log(torch.sigmoid( (torch.cosine_similarity(entity.Semantics(),constant_key.Semantics()) - gamma )/ tau ))
 
     def getFatherKey(self,concept):
         for key in self.concept_diction.keys():
@@ -321,10 +321,11 @@ class ConeConceptStructure(nn.Module):
         target = self.getConcept(concept)
 
         Prb = torch.exp(self.ObjClassify(entity,target.token))
-
+        
         Deno = 0
         for val in values:
             Deno = Deno + torch.exp(self.ObjClassify(entity,val.token))
+    
         return Prb/Deno
 
 print("Quasi-Symbolic Concept Structure Loaded.")

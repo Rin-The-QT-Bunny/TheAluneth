@@ -85,7 +85,7 @@ print("Quasi-Symbolic Executor Loaded")
 
 def GroundConcepts(executor,ground_data,lr = 2e-3):
     optim = torch.optim.Adam(executor.parameters(),lr)
-    for epoch in range(6400):
+    for epoch in range(2400):
         optim.zero_grad()
         Loss = 0
         for bind in ground_data:
