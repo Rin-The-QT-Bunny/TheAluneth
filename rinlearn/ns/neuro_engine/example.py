@@ -26,7 +26,7 @@ class filter_imp(Vertex):
         value = inputs[1]
         outlp = []
         for i in range(obs["outputs"].shape[0]):
-            Prb = structure.FilterClassify(EntityBox(obs["outputs"][i:i+1]),value)
+            Prb = structure.FilterClassify(EntityDot(obs["outputs"][i:i+1]),value)
             Prb = torch.log(Prb)
             outlp.append(torch.min(scores[i].reshape([1,-1]),Prb.reshape([1,-1])))
         outlp = torch.cat(outlp,0)
@@ -105,7 +105,7 @@ class measure_imp(Vertex):
         for target in keys:
             prob_target = 0
             for i in range(object_scores.shape[0]):
-                entity = EntityBox(object_features[i:i+1])
+                entity = EntityDot(object_features[i:i+1])
                 #print(object_scores[i].detach().numpy(),structure.FilterClassify(entity,target))
                 prob_target = prob_target + object_scores[i] *structure.FilterClassify(entity,target).reshape([1])
             out_probs.append(prob_target)

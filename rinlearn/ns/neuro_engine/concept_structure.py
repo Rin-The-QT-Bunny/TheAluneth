@@ -76,11 +76,10 @@ class ConceptDot(nn.Module):
         return self.center
 
 class EntityDot(nn.Module):
-    def __init__(self,name,reps):
+    def __init__(self,reps):
         super().__init__()
         self.s_dim = reps.shape[0]
         self.center= reps
-        self.token = name
     
     def Semantics(self):
         return self.center
@@ -297,8 +296,9 @@ class ConeConceptStructure(nn.Module):
         if (constant_key == None):
             print("Error: concept key for classification not found")
             return -1
-
-        return LogConditionProb(entity,constant_key)
+        gamma = 0.25
+        tau = 0.1
+        return torch.sigmoid( (torch.cosine_similarity(entity.Semantics(),constant_key.Semantics()) - gamma )/ tau )
 
     def getFatherKey(self,concept):
         for key in self.concept_diction.keys():
@@ -320,7 +320,8 @@ class ConeConceptStructure(nn.Module):
         values = self.concept_diction[cateName]
         target = self.getConcept(concept)
 
-        Prb = torch.exp(LogConditionProb(entity,target))
+        Prb = torch.exp(self.ObjClassify(entity,target.token))
+
         Deno = 0
         for val in values:
             Deno = Deno + torch.exp(self.ObjClassify(entity,val.token))
