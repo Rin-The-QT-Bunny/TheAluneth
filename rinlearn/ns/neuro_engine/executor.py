@@ -83,9 +83,9 @@ class QuasiExecutor(nn.Module):
 print("Quasi-Symbolic Executor Loaded")
 
 
-def GroundConcepts(executor,ground_data,lr = 1e-2):
+def GroundConcepts(executor,ground_data,lr = 2e-3):
     optim = torch.optim.Adam(executor.parameters(),lr)
-    for epoch in range(2400):
+    for epoch in range(6400):
         optim.zero_grad()
         Loss = 0
         for bind in ground_data:
@@ -97,7 +97,7 @@ def GroundConcepts(executor,ground_data,lr = 1e-2):
             outputs,logprobs = result["outputs"],result["logprobs"]
             loss_index = outputs.index(ground_truth)
             Loss = Loss - logprobs[loss_index]
-        if ((epoch + 1) % 200 == 0):
+        if ((epoch + 1) % 600 == 0):
             print("Epoch: {} Loss: {}".format(epoch + 1,dnp(Loss)))
         Loss.backward()
         optim.step()
