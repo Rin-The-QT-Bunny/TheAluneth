@@ -158,7 +158,7 @@ ops = nn.ModuleList([cscene,
 cDSL = DSL(ops,constants)
 
 # grammar of the concept structure
-grammar = BoxConceptStructure(constants)
+grammar = ConeConceptStructure(constants)
 # hybrid executor using the conceptstructure and implementations
 cexe = QuasiExecutor(grammar,imps)
 

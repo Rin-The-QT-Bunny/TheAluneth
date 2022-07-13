@@ -183,14 +183,3 @@ class Sprites(Dataset):
         if self.transform is not None:
             img = self.transform(img)
         return img, self.counts[idx]
-
-
-import math
-
-def func(pt,phi,eta,mass):
-    m = 0
-    px = pt * math.cos(phi)
-    py = pt * math.sin(phi)
-    pz = pt * math.sinh(eta)
-    m = math.sqrt(mass ** 2- px**2 - py**2 - pz**2)
-    return m

@@ -66,9 +66,24 @@ class EntityBox(nn.Module):
         return self.Center() + self.Edge()
 
 class ConceptDot(nn.Module):
-    def __init__(self,name):
+    def __init__(self,name,dim = 256):
         super().__init__()
+        self.s_dim = dim
+        self.center = nn.Parameter(torch.randn([1,dim]))
+        self.token = name
+    
+    def Semantics(self):
+        return self.center
 
+class EntityDot(nn.Module):
+    def __init__(self,name,reps):
+        super().__init__()
+        self.s_dim = reps.shape[0]
+        self.center= reps
+        self.token = name
+    
+    def Semantics(self):
+        return self.center
 
 def M(concept1,concept2):
     return torch.min(concept1.Max(),concept2.Max())
@@ -143,6 +158,12 @@ def toBoxConcepts(constants,dim = 100):
     output = nn.ModuleList([])
     for const in constants:
         output.append(ConceptBox(const.token,dim))
+    return output
+
+def toDotConcepts(constants,dim = 256):
+    output = nn.ModuleList([])
+    for const in constants:
+        output.append(ConceptDot(const.token,dim))
     return output
 
 class BoxConceptStructure(ConceptStructure):
@@ -230,17 +251,79 @@ class BoxConceptStructure(ConceptStructure):
 class ConeConceptStructure(nn.Module):
     def __init__(self,constants,dim_c = 100, dim_object = 256):
         super().__init__()
-        self.concept_diciton = {}
-        self.concept_name = []
-        self.adjust_map = nn.Linear(dim_object,dim_c)
+        self.concept_diction = {}
+        self.concept_names = []
+        for const in constants:
+            if (const.token not in self.concept_names):
+                self.concept_names.append(const.token)
+            if (const.out_type  not in self.concept_names):
+                self.concept_names.append(const.out_type)
+            ctype = const.out_type
+            if (ctype in self.concept_diction.keys()):
+                self.concept_diction[ctype].append(const)
+            else:
+                self.concept_diction[ctype] = [const]
+        #print("concept structure diciton:",self.concept_diction)
+        dim = constants[0].s_dim
+        #print("structure dim:",dim)
+        self.constants = toDotConcepts(constants,dim)
 
     def Relate(self):
         return 0
     
-    def ObjClassify(self):
-        return 0
+    def Classify(self,entity,concept):
+        # input a entity and a category level concept.
+        # output the keys and probs for the enitity belongs to each key
+        constant_key = None
+        for const in self.constants:
+
+            if const.token == concept:
+                constant_key = const
+
+        if (constant_key == None):
+            print("Error: concept key for classification not found")
+            return -1
+        #print("Pr[e|c]",ConditionProb(EntityBox(entity,constant_key.s_dim),constant_key,True))
+        #print("Pr[c|e]",ConditionProb(constant_key,EntityBox(entity,constant_key.s_dim),True))
+        #print("LogPr[e|c]", LogConditionProb(EntityBox(entity,constant_key.s_dim),constant_key,True))
+        return LogConditionProb(EntityBox(entity,constant_key.s_dim),constant_key)
+
+    def ObjClassify(self,entity,concept):
+        # return Pr[o|c] 
+        constant_key = None
+        for const in self.constants:
+            if const.token == concept:
+                constant_key = const
+        if (constant_key == None):
+            print("Error: concept key for classification not found")
+            return -1
+
+        return LogConditionProb(entity,constant_key)
+
+    def getFatherKey(self,concept):
+        for key in self.concept_diction.keys():
+            values = self.concept_diction[key]
+            for val in values:
+                if (val.token == concept):
+                    return key
+        return -1
     
-    def Classify(self):
-        return 0
+    def getConcept(self,concept):
+        for cons in self.constants:
+            if (cons.token == concept):
+                return cons
+        return -1
+
+    def FilterClassify(self,entity,concept):
+
+        cateName = self.getFatherKey(concept)
+        values = self.concept_diction[cateName]
+        target = self.getConcept(concept)
+
+        Prb = torch.exp(LogConditionProb(entity,target))
+        Deno = 0
+        for val in values:
+            Deno = Deno + torch.exp(self.ObjClassify(entity,val.token))
+        return Prb/Deno
 
 print("Quasi-Symbolic Concept Structure Loaded.")
