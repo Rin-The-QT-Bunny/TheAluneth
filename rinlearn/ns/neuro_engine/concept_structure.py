@@ -76,7 +76,7 @@ class ConceptDot(nn.Module):
         return self.center
 
 class EntityDot(nn.Module):
-    def __init__(self,reps):
+    def __init__(self,reps,dim):
         super().__init__()
         self.s_dim = reps.shape[0]
         self.center= reps
@@ -263,9 +263,9 @@ class ConeConceptStructure(nn.Module):
             else:
                 self.concept_diction[ctype] = [const]
         #print("concept structure diciton:",self.concept_diction)
-        dim = constants[0].s_dim
+        self.dim = constants[0].s_dim
         #print("structure dim:",dim)
-        self.constants = toDotConcepts(constants,dim)
+        self.constants = toDotConcepts(constants,self.dim)
 
     def Relate(self):
         return 0
