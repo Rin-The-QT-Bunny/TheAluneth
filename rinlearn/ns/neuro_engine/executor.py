@@ -75,7 +75,7 @@ class QuasiExecutor(nn.Module):
             curr_inputs = []
             for child in head.children:
                 curr_inputs.append(execute(child,context))
-            
+
             return current_operator.propagate(curr_inputs,context,self.concept_structure)
         outputs = execute(program,context)
         return outputs

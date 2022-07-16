@@ -108,6 +108,7 @@ class EncoderNet(nn.Module):
     def forward(self, x):
         x = self.convs(x)
         x = x.view(x.shape[0], -1)
+
         x = self.mlp(x)
         return x
 

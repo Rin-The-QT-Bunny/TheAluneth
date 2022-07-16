@@ -181,9 +181,9 @@ class BoxConceptStructure(ConceptStructure):
             else:
                 self.concept_diction[ctype] = [const]
         #print("concept structure diciton:",self.concept_diction)
-        dim = constants[0].s_dim
+        self.dim = constants[0].s_dim
         #print("structure dim:",dim)
-        self.constants = toBoxConcepts(constants,dim)
+        self.constants = toBoxConcepts(constants,self.dim)
     
     def Posses(self,entities,concept):
         # input a set of box entities and key-level concept
