@@ -107,6 +107,7 @@ class FuncNode:
         self.function = True
         self.type = "Function"
         self.isRoot = False
+    def has_children(self): return len(self.children) != 0
     
     def __str__(self):
         return_str = ""
