@@ -236,8 +236,9 @@ class DETR(nn.Module):
             self.query_pos.unsqueeze(1)).transpose(0,1)
         return {"pred_logits":self.linear_class(h),"pred_boxes":self.linear_bbox(h).sigmoid}
 
+from aluneth.rinlearn.nn.utils import *
 
-    class SpatialBroadcastMaskDecoder(nn.Module):
+class SpatialBroadcastMaskDecoder(nn.Module):
         def __init__(self,resolution,backbone,pos_emb):
             super().__init__()
             self.resolution = resolution
@@ -252,4 +253,17 @@ class DETR(nn.Module):
 
             # Fold slot dim into batch dim
             x = slots.reshape(shape = (batch_size * n_slots, n_features))
+            x = spatial_broadcast(x,self.resolution)
             x = self.pos_emb(x)
+
+            # bb_features.shape = (batch_size * n_slots,h,w,c)
+            bb_features = self.backbone(x,channel_last=True)
+            spatial_dims = bb_features.shape[-3:-1]
+
+            alpha_logits = self.mask_pred(
+                bb_features.reshape(shape = (-1,bb_features.shape[-1]))
+            )
+            alpha_logits = alpha_logits.reshape(
+                shape=(batch_size,n_slots,*spatial_dims,-1)
+            )
+            return bb_features,alpha_logits
