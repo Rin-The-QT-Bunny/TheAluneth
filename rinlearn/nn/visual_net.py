@@ -235,3 +235,21 @@ class DETR(nn.Module):
         h = self.transformer(pos + 0.1 * h.flatten(2).permute(2,0,1),
             self.query_pos.unsqueeze(1)).transpose(0,1)
         return {"pred_logits":self.linear_class(h),"pred_boxes":self.linear_bbox(h).sigmoid}
+
+
+    class SpatialBroadcastMaskDecoder(nn.Module):
+        def __init__(self,resolution,backbone,pos_emb):
+            super().__init__()
+            self.resolution = resolution
+            self.backbone = backbone
+            self.pos_emb = pos_emb
+
+            #sub modules
+            self.mask_pred = nn.Linear(self.backbone.features[-1],1)
+
+        def forward(self,slots):
+            batch_size,n_slots,n_features = slots.shape
+
+            # Fold slot dim into batch dim
+            x = slots.reshape(shape = (batch_size * n_slots, n_features))
+            x = self.pos_emb(x)
