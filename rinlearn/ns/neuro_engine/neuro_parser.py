@@ -115,7 +115,7 @@ class NeuroAttnDecoder(nn.Module):
         #key_proj = key_proj/torch.norm(key_proj)
         #print("key proj:",key_proj)
         #pdf = torch.softmax(torch.matmul(key_proj,operator_features.permute(1,0)),1)
-        pdf = torch.sigmoid( (torch.cosine_similarity(key,operator_features)-0.2) /0.1)
+        pdf = torch.sigmoid( (torch.cosine_similarity(key,operator_features)-0.0) /0.125)
         pdf = pdf/torch.sum(pdf)
         return operator_keys,pdf,require_args
 

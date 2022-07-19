@@ -113,7 +113,7 @@ class EncoderNet(nn.Module):
         return x
 
 class DecoderNet(nn.Module):
-    def __init__(self, height, width,in_channels,out_channels = 4):
+    def __init__(self, width, height,in_channels,out_channels = 4):
         super().__init__()
         self.height = height
         self.width = width
