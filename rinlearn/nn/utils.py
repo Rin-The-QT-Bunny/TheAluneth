@@ -11,3 +11,11 @@ def broadcast_across_batch(inputs, batch_size):
   return torch.broadcast_to(
       torch.unsqueeze(0),
       size=(batch_size,) + inputs.shape)
+
+def build_grid(resolution):
+    ranges = [torch.linspace(0.0, 1.0, steps=res) for res in resolution]
+    grid = torch.meshgrid(*ranges)
+    grid = torch.stack(grid, dim=-1)
+    grid = torch.reshape(grid, [resolution[0], resolution[1], -1])
+    grid = grid.unsqueeze(0)
+    return torch.cat([grid, 1.0 - grid], dim=-1)

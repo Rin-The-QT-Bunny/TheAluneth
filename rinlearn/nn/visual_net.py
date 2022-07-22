@@ -270,3 +270,14 @@ class SpatialBroadcastMaskDecoder(nn.Module):
                 shape=(batch_size,n_slots,*spatial_dims,-1)
             )
             return bb_features,alpha_logits
+
+class SoftPositionEmbed(nn.Module):
+    def __init__(self, num_channels: int, hidden_size: int, resolution):
+        super().__init__()
+        self.dense = nn.Linear(in_features=num_channels, out_features=hidden_size)
+        self.register_buffer("grid", build_grid(resolution))
+
+    def forward(self, inputs):
+        emb_proj = self.dense(self.grid).permute(0, 3, 1, 2)
+
+        return inputs + emb_proj
