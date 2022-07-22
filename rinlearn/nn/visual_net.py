@@ -280,4 +280,23 @@ class SoftPositionEmbed(nn.Module):
     def forward(self, inputs):
         emb_proj = self.dense(self.grid).permute(0, 3, 1, 2)
 
-        return inputs + emb_proj
+        return inputs + emb_proj * 5
+
+
+class MaskDecoder(nn.Module):
+    def __init__(self,feature_dim,out_dim,resolution):
+        super().__init__()
+        self.height,self.width = resolution
+        self.pos_embed = SoftPositionEmbed(4,feature_dim,resolution)
+        self.pred = FCBlock(132,3,feature_dim,1)
+        self.feature_dim = feature_dim
+
+    def forward(self,z):
+        z_tiled = z.unsqueeze(-1).unsqueeze(-1).repeat(1, 1, self.height, self.width)
+        z_tiled = self.pos_embed(z_tiled)
+        batch_size,feature_dim = z.shape
+        z_tiled = z_tiled.permute([0,2,3,1])
+        logits = self.pred(z_tiled)
+        mask = torch.sigmoid(17 * logits)
+        mask = mask.permute([0,3,1,2])
+        return mask
