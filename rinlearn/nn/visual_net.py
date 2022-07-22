@@ -134,10 +134,10 @@ class DecoderNet(nn.Module):
         ys, xs = torch.meshgrid(ys, xs)
         coord_map = torch.stack((ys, xs)).unsqueeze(0)
         self.register_buffer('coord_map_const', coord_map)
-        self.T = FCBlock(128,3,in_channels,in_channels)
+        #self.T = FCBlock(128,3,in_channels,in_channels)
 
     def forward(self, z):
-        z = self.T(z)
+        #z = self.T(z)
         z_tiled = z.unsqueeze(-1).unsqueeze(-1).repeat(1, 1, self.height + 8, self.width + 8)
         coord_map = 10*self.coord_map_const.repeat(z.shape[0], 1, 1, 1)
         inp = torch.cat((z_tiled, coord_map), 1)
