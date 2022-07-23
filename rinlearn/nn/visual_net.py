@@ -297,6 +297,6 @@ class MaskDecoder(nn.Module):
         batch_size,feature_dim = z.shape
         z_tiled = z_tiled.permute([0,2,3,1])
         logits = self.pred(z_tiled)
-        mask = torch.sigmoid(17 * logits)
+        mask = torch.sigmoid(3*logits)
         mask = mask.permute([0,3,1,2])
         return mask

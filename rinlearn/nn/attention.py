@@ -57,11 +57,12 @@ class SlotAttention(nn.Module):
 
             updates = torch.einsum('bjd,bij->bid', v, attn)
 
-            slots = self.gru(
-                updates.reshape(-1, d),
-                slots_prev.reshape(-1, d)
-            )
-
+            # slots = self.gru(
+            #     updates.reshape(-1, d),
+            #     slots_prev.reshape(-1, d)
+            # )
+            #print(updates.shape,slots_prev.shape)
+            slots= updates + slots_prev
             slots = slots.reshape(b, -1, d)
             slots = slots + self.mlp(self.norm_pre_ff(slots))
 
