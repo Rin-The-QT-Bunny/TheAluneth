@@ -288,7 +288,7 @@ class MaskDecoder(nn.Module):
         super().__init__()
         self.height,self.width = resolution
         self.pos_embed = SoftPositionEmbed(4,feature_dim,resolution)
-        self.pred = FCBlock(132,3,feature_dim,1)
+        self.pred = FCBlock(132,3,feature_dim,out_dim)
         self.feature_dim = feature_dim
 
     def forward(self,z):
@@ -300,3 +300,90 @@ class MaskDecoder(nn.Module):
         mask = torch.sigmoid(3*logits)
         mask = mask.permute([0,3,1,2])
         return mask
+
+class CNN(nn.Module):
+    """ CNN model with conv and normalization layers """
+
+    def __init__(
+        self,
+        features,
+        kernel_size,
+        strides,
+        layer_transpose,
+        activation_fn= F.relu,
+        norm_type = None,
+        dim_name = None,  # Name of dim over which to aggregate batch stats
+        output_size = None,
+        train = True,
+    ):
+        super().__init__()
+        self.num_layers = len(features)
+        self.features = features
+        self.strides = strides
+        self.kernel_size = kernel_size
+        self.layer_transpose = layer_transpose
+        self.activation_fn = activation_fn
+        self.norm_type = norm_type
+        self.dim_name = dim_name
+        self.output_size = output_size
+        self.training = train
+
+        assert self.num_layers >= 1, "Need to have at least one layer."
+        assert (
+            len(self.kernel_size) == self.num_layers
+        ), "len(kernel_size) and len(features) must match."
+        assert (
+            len(self.strides) == self.num_layers
+        ), "len(strides) and len(features) must match."
+        assert (
+            len(self.layer_transpose) == self.num_layers
+        ), "len(layer_transpose) and len(features) must match."
+
+        if self.norm_type:
+            assert self.norm_type in {
+                "batch",
+                "group",
+                "instance",
+                "layer",
+            }, f"{self.norm_type} is not a valid normalization module."
+
+        # Build conv net
+        self.conv_layers = []
+        for i, lt in enumerate(layer_transpose):
+            if not lt:
+                conv = nn.Conv2d
+            else:
+                conv = nn.ConvTranspose2d
+
+            in_channels = 3 if i == 0 else self.features[i - 1]
+            layer = conv(
+                in_channels,
+                self.features[i],
+                kernel_size=kernel_size[i],
+                stride=strides[i],
+                padding="same",
+                bias=False if self.norm_type else True,
+            )
+            self.conv_layers.append(layer)
+
+        self.conv = nn.Sequential(*self.conv_layers)
+
+        # Select norm type
+        if self.norm_type == "batch":
+            self.norm_module = nn.BatchNorm2d(
+                momentum=0.1, track_running_stats=not self.training
+            )
+        elif self.norm_type == "group" or self.norm_type == "instance":
+            self.norm_module = nn.GroupNorm(
+                num_channels=self.features[-1], num_groups=32
+            )
+        elif self.norm_type == "layer":
+            self.norm_module = nn.LayerNorm(self.features[-1])
+
+    def forward(self, x):
+        x = self.conv(x)
+        if self.norm_type:
+            x = self.norm_module(x)
+        x = self.activation_fn(x)
+
+        return x

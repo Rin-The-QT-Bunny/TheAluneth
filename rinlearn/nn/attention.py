@@ -67,3 +67,42 @@ class SlotAttention(nn.Module):
             slots = slots + self.mlp(self.norm_pre_ff(slots))
 
         return slots
+
+class Transformer(nn.Module):
+    """Transformer with multiple blocks."""
+
+    def __init__(
+        self,
+        num_heads: int,
+        qkv_size: int,
+        mlp_size: int,
+        num_layers: int,
+        pre_norm: bool = False,
+    ):
+        super().__init__()
+        self.num_heads = num_heads
+        self.mlp_size = mlp_size
+        self.num_layers = num_layers
+        self.pre_norm = pre_norm
+        self.qkv_size = qkv_size
+
+        self.transformer_blocks = nn.Sequential(
+            *[
+                nn.TransformerDecoderLayer(
+                    d_model=qkv_size,
+                    nhead=num_heads,
+                    dim_feedforward=mlp_size,
+                    norm_first=pre_norm,
+                )
+                for _ in range(self.num_layers)
+            ]
+        )
+
+    def forward(
+        self,
+        queries,
+        inputs,
+        padding_mask
+    ):
+        x = self.transformer_blocks(queries, inputs, padding_mask)
+        return x
