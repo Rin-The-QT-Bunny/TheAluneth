@@ -1,8 +1,9 @@
 import torch
-import torch.nn as nn
 import pickle
 import json 
 import sys
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def dnp(tensor,gpu = False):
     # detach the tensor from the calculation tree
