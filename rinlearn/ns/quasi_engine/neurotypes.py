@@ -6,10 +6,6 @@ import numpy as np
 
 from aluneth.utils import *
 
-OBJECT_FEATURE_DIM = 256
-CONCEPT_FEATURE_DIM = 256
-RELATION_FEATURE_DIM = 512
-
 class ObjectSet(nn.Module):
     def __init__(self,features,probs):
         super().__init__()
@@ -64,31 +60,3 @@ def mix_measurements(measurements,probs,unitary = False):
         meas = measurements[i+1]
         basic_meas = basic_meas + meas.probs * probs[i + 1]
     return ConceptMeasurement(measurements[0].keys,basic_meas)
-
-keys = ["red","blue","green"]
-probs1 = torch.sigmoid(torch.randn([3]))
-probs1 = probs1/torch.sum(probs1)
-cout1 = ConceptMeasurement(keys,probs1)
-
-
-probs2 = torch.sigmoid(torch.randn([3]))
-probs2 = probs2/torch.sum(probs2)
-cout2 = ConceptMeasurement(keys,probs2)
-
-probs3 = torch.sigmoid(torch.randn([3]))
-probs3 = probs3/torch.sum(probs3)
-cout3 = ConceptMeasurement(keys,probs3)
-
-cmix = mix_measurements([cout1,cout2,cout3],[0.5,0.5,0.5],True)
-
-
-
-print(cout1.pdf())
-print(cout2.pdf())
-print(cout3.pdf())
-print(cmix.pdf())
-
-Oset = ObjectSet(torch.randn([3,OBJECT_FEATURE_DIM]),torch.ones([3]))
-SO = cast_object_set(Oset)
-print(Oset.pdf())
-print(SO.pdf())
