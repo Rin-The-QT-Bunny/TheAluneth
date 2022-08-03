@@ -30,8 +30,15 @@ class RelationDot(nn.Module):
 # This part contains the basic concept type and corresponding structures.
 
 class NeuroConceptStructure(nn.Module):
-    def __init__(self,concepts):
-        self.concepts = nn.ModuleList(concepts)
+    def __init__(self,concepts,relations):
+        super().__init__()
+        if not isinstance(concepts,nn.ModuleList):
+            self.concepts = nn.ModuleList(concepts)
+        else:self.concepts = concepts
+
+        if not isinstance(relations,nn.ModuleList):
+            self.relations = nn.ModuleList(relations)
+        else:self.relations = relations
     
     def add_concept(self,concept): self.concepts.append(concept)
 

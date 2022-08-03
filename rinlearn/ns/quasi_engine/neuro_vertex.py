@@ -23,7 +23,7 @@ class VertexExecutor(nn.Module):
         def retrieve(p,context):
             inputs = []
             # look for arguments
-            if p.has_arg():
+            if p.has_args():
                 for arg in p.children:
                     inputs.append(retrieve(arg,context))
             # locate the implementation by the token name
