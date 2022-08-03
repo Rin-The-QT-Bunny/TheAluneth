@@ -13,13 +13,20 @@ import torch.nn as nn
 class ConceptDot(nn.Module):
     def __init__(self,name,type,dim = 256):
         super().__init__()
+        self.name = name
+        self.type = type
         self.feature = torch.randn([1,dim])
 
-class RelationDot(nn.Module):
-    def __init__(self,feature):
-        super().__init__()
-        self.feature = self.feature
+    def __str__(self):return "concept:{}".format(self.name)
 
+class RelationDot(nn.Module):
+    def __init__(self,name,type,dim = 266):
+        super().__init__()
+        self.name = name
+        self.type = type
+        self.feature = torch.randn([1,dim])
+
+    def __str__(self):return "relation:{}".format(self.name)
 # This part contains the basic concept type and corresponding structures.
 
 class NeuroConceptStructure(nn.Module):
