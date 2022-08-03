@@ -47,7 +47,7 @@ class CMeasureColor(DiffVertex):
 cimps = [CScene(),CMeasureColor()]
 
 # write the executor to execute the program in the context
-context = {"Objects":ObjectSet(torch.randn([2,OBJECT_FEATURE_DIM]),0.999 * torch.ones([1,2]))}
+context = {"Objects":ObjectSet(torch.randn([2,OBJECT_FEATURE_DIM]),0.999 * torch.ones([2]))}
 NORD = VertexExecutor(cstructure,cimps)
 
 program = toFuncNode("measure_color(scene())")
