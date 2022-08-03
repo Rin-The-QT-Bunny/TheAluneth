@@ -7,9 +7,15 @@ import torch.nn as nn
 # Pr[c|e] which means the outcome prob of e entails c 
 # Pr[r|e1,e2] which means the prob of (e1,e1) entails r
 
+
+# Basic concept types of for the concept structure
+
+# This part contains the basic concept type and corresponding structures.
+
 class NeuroConceptStructure(nn.Module):
     def __init__(self):return 0
 
     def PrConceptMeasure(value,entity): return 0
 
     def PrRelationMeasure(relation,entity1,entity2): return 0
+
