@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+from neuro_types import *
 # A concept structure is convieved as the way how concepts/relations interacts with object/objects
 # and produce the probabilitic outcomes. Basically a concept structure is a set of functions that 
 # contains the way to calculate the following things:
@@ -42,8 +43,25 @@ class NeuroConceptStructure(nn.Module):
     
     def add_concept(self,concept): self.concepts.append(concept)
 
-    def MeasureConcept(self,concept,entity): return ["c1","c2"]
+    def MeasureConcept(self,concept,entity): 
+        measures = []
 
+        for i in range(entity.features.shape[0]):
+            e = entity.features[i]
+            scores = []
+            concept_values = []
+            for c in self.concepts:
+                if c.type == concept:
+                    concept_values.append(c.name)
+                    scores.append(torch.sigmoid( (torch.cosine_similarity(c.feature,e)-0.2) / 0.15))
+            scores = normalize(torch.cat(scores,0))
+ 
+            meas = ConceptMeasurement(concept_values,scores)
+            measures.append(meas)
+
+        return mix_measurements(measures,entity.probs)
+
+            
     def PrConceptMeasure(self,value,entity): return 0
 
     def MeasureRelation(self,relation,entity1,entity2): return 0

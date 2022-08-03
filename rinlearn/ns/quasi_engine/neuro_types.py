@@ -46,13 +46,13 @@ class ConceptMeasurement(nn.Module):
 
 def mix_measurements(measurements,probs,unitary = False):
     size_meas = 0;size_probs = -1
-    if isinstance(probs,torch.Tensor):size_meas = measurements.shape[0] 
+    if isinstance(measurements,torch.Tensor):size_meas = measurements.shape[0] 
     else: size_meas = len(measurements)
     if isinstance(probs,torch.Tensor):size_probs = probs.shape[0] 
     else: size_probs = len(probs)
-
+   
     assert size_meas  == size_probs,"measurements and mix probs doesn't match"
-    probs = torch.tensor(probs)
+    if isinstance(probs,list):probs = torch.tensor(probs)
     if(unitary): probs = probs/torch.sum(probs)
 
     basic_meas = measurements[0].probs * probs[0]

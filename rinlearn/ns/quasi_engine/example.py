@@ -41,7 +41,8 @@ class CMeasureColor(DiffVertex):
 
     def prop(self,inputs,structure,context):
         assert isinstance(context,dict),print("context is not a valid diction.")
-        return structure.MeasureConcept("color",inputs)
+
+        return structure.MeasureConcept("color",inputs[0])
 
 cimps = [CScene(),CMeasureColor()]
 
@@ -50,6 +51,9 @@ context = {"Objects":ObjectSet(torch.randn([1,OBJECT_FEATURE_DIM]),0.999 * torch
 NORD = VertexExecutor(cstructure,cimps)
 
 program = toFuncNode("measure_color(scene())")
+
+
+print(cstructure.MeasureConcept("color",ObjectSet(torch.randn([1,OBJECT_FEATURE_DIM]),0.999 * torch.ones([1,1]))).sample_result())
 
 outputs = NORD.execute(program,context)
 print(outputs)

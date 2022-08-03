@@ -33,6 +33,7 @@ class VertexExecutor(nn.Module):
                 for arg in p.children:
                     inputs.append(retrieve(arg,context))
             # locate the implementation by the token name
+
             if impl == None:return []
             return implement.prop(inputs,self.concept_structure,context)
         return retrieve(program,context)
