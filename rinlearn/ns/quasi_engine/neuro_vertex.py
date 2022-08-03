@@ -18,8 +18,9 @@ class VertexExecutor(nn.Module):
         self.concept_structure = structure # The basis of implementations
     
     def execute(self,program,context):
-        if isinstance(program,DiffVertex):pass
+        if isinstance(program,FuncNode):pass
         else: program = toFuncNode(program)
+        print("execute:",program)
         def retrieve(p,context):
             inputs = []
             # look for arguments
@@ -28,7 +29,8 @@ class VertexExecutor(nn.Module):
                     inputs.append(retrieve(arg,context))
             # locate the implementation by the token name
             for implement in self.implementations:
-                if implement.name == arg.token:
+
+                if implement.name == p.token:
                     return implement.prop(inputs,self.concept_structure,context)
             raise ImplementationNotFound()
         return retrieve(program,context)
