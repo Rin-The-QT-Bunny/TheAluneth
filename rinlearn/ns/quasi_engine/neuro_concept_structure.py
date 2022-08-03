@@ -11,7 +11,7 @@ import torch.nn as nn
 # Basic concept types of for the concept structure
 
 class ConceptDot(nn.Module):
-    def __init__(self,name,type,dim):
+    def __init__(self,name,type,dim = 256):
         super().__init__()
         self.feature = torch.randn([1,dim])
 
