@@ -12,10 +12,10 @@ class DiffVertex(nn.Module):
     def prop(self,inputs,structure,context):return inputs
 
 class VertexExecutor(nn.Module):
-    def __init__(self):
+    def __init__(self,structure,imps):
         super().__init__()
-        self.implementations = None # actual implementations of operators
-        self.concept_structure = None # The basis of implementations
+        self.implementations = imps # actual implementations of operators
+        self.concept_structure = structure # The basis of implementations
     
     def execute(self,program,context):
         if isinstance(program,DiffVertex):pass
