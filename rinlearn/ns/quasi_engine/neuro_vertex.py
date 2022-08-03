@@ -35,6 +35,6 @@ class VertexExecutor(nn.Module):
             # locate the implementation by the token name
 
             if impl == None:return []
-            return implement.prop(inputs,self.concept_structure,context)
+            return impl.prop(inputs,self.concept_structure,context)
         return retrieve(program,context)
             

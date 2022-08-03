@@ -37,7 +37,7 @@ class ConceptMeasurement(nn.Module):
         if cast: self.probs = self.probs/torch.sum(self.probs)
     
     def pdf(self,flag=False): 
-        if flag:return np.concatenate([self.keys,dnp(self.probs)],0)
+        if flag:return self.keys,dnp(self.probs)
         else: return dnp(self.probs)
     
     def most_likely_result(self):return self.keys[np.argmax(dnp(self.probs))]
