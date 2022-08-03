@@ -28,7 +28,11 @@ class NeuroConceptStructure(nn.Module):
     
     def add_concept(self,concept): self.concepts.append(concept)
 
+    def MeasureConcept(concept,entity): return 0
+
     def PrConceptMeasure(value,entity): return 0
+
+    def MeasureRelation(relation,entity1,entity2): return 0
 
     def PrRelationMeasure(relation,entity1,entity2): return 0
 
