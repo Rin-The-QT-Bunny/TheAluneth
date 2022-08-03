@@ -52,3 +52,4 @@ NORD = VertexExecutor(cstructure,cimps)
 program = toFuncNode("measure_color(scene())")
 
 outputs = NORD.execute(program,context)
+print(outputs)

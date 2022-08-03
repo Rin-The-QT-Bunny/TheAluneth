@@ -20,18 +20,20 @@ class VertexExecutor(nn.Module):
     def execute(self,program,context):
         if isinstance(program,FuncNode):pass
         else: program = toFuncNode(program)
-        print("execute:",program)
+
         def retrieve(p,context):
+            impl = None
+            curr_name = p.token
+            for implement in self.implementations:
+                if implement.name == curr_name:
+                    impl = implement
             inputs = []
             # look for arguments
             if p.has_args():
                 for arg in p.children:
                     inputs.append(retrieve(arg,context))
             # locate the implementation by the token name
-            for implement in self.implementations:
-
-                if implement.name == p.token:
-                    return implement.prop(inputs,self.concept_structure,context)
-            raise ImplementationNotFound()
+            if impl == None:return []
+            return implement.prop(inputs,self.concept_structure,context)
         return retrieve(program,context)
             
