@@ -26,6 +26,6 @@ probs = torch.sigmoid(torch.randn([3]))
 probs = probs/torch.sum(probs)
 cout = ConceptMeasurement(keys,probs)
 
-print(cout.pdf(True))
+print(cout.pdf())
 print(cout.most_likely_result())
 print(cout.sample_result())
