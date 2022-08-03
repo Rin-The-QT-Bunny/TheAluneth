@@ -38,7 +38,7 @@ class ConceptMeasurement(nn.Module):
     
     def pdf(self,flag=False): 
         if flag:return self.keys,dnp(self.probs)
-        else: return dnp(self.probs)
+        else: return self.keys,self.probs
     
     def most_likely_result(self):return self.keys[np.argmax(dnp(self.probs))]
 

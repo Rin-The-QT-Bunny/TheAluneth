@@ -44,14 +44,25 @@ class CMeasureColor(DiffVertex):
 
         return structure.MeasureConcept("color",inputs[0])
 
-cimps = [CScene(),CMeasureColor()]
+
+class CUnique(DiffVertex):
+    def __init__(self):
+        super().__init__()
+        self.name = "unique"
+
+    def prop(self,inputs,structure,context):
+        features = inputs[0].features
+        scores = inputs[0].probs
+        return SingleObject(features,scores/torch.sum(scores))
+
+cimps = [CScene(),CMeasureColor(),CUnique()]
 
 # write the executor to execute the program in the context
 context = {"Objects":ObjectSet(torch.randn([2,OBJECT_FEATURE_DIM]),0.999 * torch.ones([2]))}
 NORD = VertexExecutor(cstructure,cimps)
 
-program = toFuncNode("measure_color(scene())")
-
+program = toFuncNode("measure_color(unique(scene()))")
+#program = toFuncNode("measure_color(scene())")
 
 outputs = NORD.execute(program,context)
-print(outputs.pdf(True))
+print(outputs.pdf(False))

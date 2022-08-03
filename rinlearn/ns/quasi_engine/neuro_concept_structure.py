@@ -46,6 +46,7 @@ class NeuroConceptStructure(nn.Module):
     def MeasureConcept(self,concept,entity): 
         measures = []
 
+        assert torch.abs(torch.sum(entity.probs)-1)<0.1,print("Not a valid single object")
         for i in range(entity.features.shape[0]):
             e = entity.features[i]
             scores = []
