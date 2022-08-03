@@ -10,6 +10,16 @@ import torch.nn as nn
 
 # Basic concept types of for the concept structure
 
+class ConceptDot(nn.Module):
+    def __init__(self,feature):
+        super().__init__()
+        self.feature = self.feature
+
+class RelationDot(nn.Module):
+    def __init__(self,feature):
+        super().__init__()
+        self.feature = self.feature
+
 # This part contains the basic concept type and corresponding structures.
 
 class NeuroConceptStructure(nn.Module):
