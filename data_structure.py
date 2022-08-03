@@ -109,6 +109,8 @@ class FuncNode:
         self.isRoot = False
     def has_children(self): return len(self.children) != 0
     
+    def has_args(self): return len(self.children) != 0
+    
     def __str__(self):
         return_str = ""
         return_str += self.token
