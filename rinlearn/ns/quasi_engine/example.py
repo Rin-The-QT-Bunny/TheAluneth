@@ -81,14 +81,10 @@ class CCount(DiffVertex):
 cimps = [CScene(),CMeasureColor(),CUnique(),CFilterColor(),CCount()]
 
 # write the executor to execute the program in the context
-context = {"Objects":ObjectSet(torch.randn([2,OBJECT_FEATURE_DIM]),0.999 * torch.ones([2]))}
+context = {"Objects":ObjectSet(torch.randn([3,OBJECT_FEATURE_DIM]),0.999 * torch.ones([3]))}
 NORD = VertexExecutor(cstructure,cimps)
 
-program = toFuncNode("measure_color(unique(scene()))")
-#program = toFuncNode("measure_color(scene())")
-
 program = toFuncNode("count(filter_color('red',scene()))")
-
 outputs = NORD.execute(program,context)
 print(outputs.pdf(True))
 
@@ -96,7 +92,7 @@ program = toFuncNode("measure_color(unique(scene()))")
 outputs = NORD.execute(program,context)
 print(outputs.pdf(True))
 
-programc = toFuncNode("count(filter_color('red',scene()))")
+
 
 optim = torch.optim.Adam(clist.parameters(),lr = 2e-2)
 for epoch in range(100):
