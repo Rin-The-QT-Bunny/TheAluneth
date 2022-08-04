@@ -111,8 +111,7 @@ for epoch in range(100):
     outputs = NORD.execute(program,context)
     outputsr = NORD.execute(programr,context)
     loss = 0 - NORD.supervise_prob(outputs,"green") - NORD.supervise_prob(outputsr,"left")
-    loss.backward()
-    optim.step()
+    loss.backward();optim.step()
     print("Working Loss: ",dnp(loss))
 
 print(outputs.pdf(True))
