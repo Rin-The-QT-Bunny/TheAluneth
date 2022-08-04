@@ -98,7 +98,7 @@ optim = torch.optim.Adam(clist.parameters(),lr = 2e-2)
 for epoch in range(100):
     optim.zero_grad()
     outputs = NORD.execute(program,context)
-    loss = 0 - NORD.supervise_prob(outputs,"red")
+    loss = 0 - NORD.supervise_prob(outputs,"green")
     loss.backward()
     optim.step()
     print("Working Loss: ",dnp(loss))
