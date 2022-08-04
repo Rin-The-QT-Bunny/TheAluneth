@@ -17,8 +17,8 @@ class ObjectSet(nn.Module):
     def __init__(self,features,probs):
         super().__init__()
         assert probs.shape[0] == features.shape[0],"size of features and probs don't match"
-        self.features = features
-        self.probs = probs
+        self.features = nn.Parameter(features)
+        self.probs = nn.Parameter(probs)
     def object_set(self): return 0
     def pdf(self,flag= False): return dnp(self.probs)
     
@@ -26,8 +26,8 @@ class SingleObject(nn.Module):
     def __init__(self,features,probs,cast=True):
         super().__init__()
         assert probs.shape[0] == features.shape[0],"size of features and probs don't match"
-        self.features = features
-        self.probs = probs
+        self.features = nn.Parameter(features)
+        self.probs = nn.Parameter(probs)
     def pdf(self): return dnp(self.probs)
 
 def normalize(tensor): return tensor/torch.sum(tensor)

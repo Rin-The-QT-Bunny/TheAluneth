@@ -16,7 +16,7 @@ class ConceptDot(nn.Module):
         super().__init__()
         self.name = name
         self.type = type
-        self.feature = torch.randn([1,dim])
+        self.feature = nn.Parameter(torch.randn([1,dim]))
 
     def __str__(self):return "concept:{}".format(self.name)
 
@@ -25,7 +25,7 @@ class RelationDot(nn.Module):
         super().__init__()
         self.name = name
         self.type = type
-        self.feature = torch.randn([1,dim])
+        self.feature = nn.Parameter(torch.randn([1,dim]))
 
     def __str__(self):return "relation:{}".format(self.name)
 # This part contains the basic concept type and corresponding structures.

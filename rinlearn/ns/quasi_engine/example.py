@@ -13,8 +13,8 @@ r1 = RelationDot("left","position")
 r2 = RelationDot("right","position")
 # positional relation of left and right
 
-clist = [c1,c2,c3]
-rlist = [r1,r2]
+clist = nn.ModuleList([c1,c2,c3])
+rlist = nn.ModuleList([r1,r2])
 
 for c in clist:print(c)
 for r in rlist:print(r)
@@ -86,9 +86,23 @@ NORD = VertexExecutor(cstructure,cimps)
 
 program = toFuncNode("measure_color(unique(scene()))")
 #program = toFuncNode("measure_color(scene())")
-program = toFuncNode("filter_color('red',scene())")
+
 program = toFuncNode("count(filter_color('red',scene()))")
 
 outputs = NORD.execute(program,context)
-print(outputs)
-print(outputs.pdf())
+print(outputs.pdf(True))
+
+program = toFuncNode("measure_color(unique(scene()))")
+outputs = NORD.execute(program,context)
+print(outputs.pdf(True))
+
+optim = torch.optim.Adam(clist.parameters(),lr = 2e-2)
+for epoch in range(100):
+    optim.zero_grad()
+    outputs = NORD.execute(program,context)
+    loss = 0 - outputs.probs[0]
+    loss.backward()
+    optim.step()
+    print("Working Loss: ",dnp(loss))
+
+print(outputs.pdf(True))
