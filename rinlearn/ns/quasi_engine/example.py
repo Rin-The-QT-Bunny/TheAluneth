@@ -96,11 +96,13 @@ program = toFuncNode("measure_color(unique(scene()))")
 outputs = NORD.execute(program,context)
 print(outputs.pdf(True))
 
+programc = toFuncNode("count(filter_color('red',scene()))")
+
 optim = torch.optim.Adam(clist.parameters(),lr = 2e-2)
 for epoch in range(100):
     optim.zero_grad()
     outputs = NORD.execute(program,context)
-    loss = 0 - outputs.probs[0]
+    loss = 0 - NORD.supervise_prob(outputs,"red")
     loss.backward()
     optim.step()
     print("Working Loss: ",dnp(loss))

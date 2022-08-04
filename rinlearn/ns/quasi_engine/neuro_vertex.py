@@ -3,7 +3,12 @@ import torch.nn as nn
 
 from aluneth.data_structure import *
 
+from neuro_types import *
+
 class ImplementationNotFound(Exception):
+    pass
+
+class UnknownSupervisionType(Exception):
     pass
 
 class DiffVertex(nn.Module):
@@ -16,7 +21,15 @@ class VertexExecutor(nn.Module):
         super().__init__()
         self.implementations = imps # actual implementations of operators
         self.concept_structure = structure # The basis of implementations
-    
+
+    def supervise_prob(self,input,target):
+        if isinstance(input,Rint): # prior distribution on real interger
+            return torch.sigmoid((0.5 - torch.abs(target - input.value))/0.125)
+        if isinstance(input,ConceptMeasurement): # prob of a pure state measurement on the input
+            return input.probs[input.keys.index(target)]
+        raise UnknownSupervisionType()
+        return 
+        
     def execute(self,program,context):
         if isinstance(program,FuncNode):pass
         else: program = toFuncNode(program)
