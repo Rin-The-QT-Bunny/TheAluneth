@@ -114,9 +114,17 @@ class NeuroConceptStructure(nn.Module):
                 scores = normalize(torch.cat(scores,0))
                 meas = ConceptMeasurement(relation_values,scores)
                 measures.append(meas)
-        
-
         return mix_measurements(measures,mix_probs)
 
-    def PrRelationMeasure(self,relation,entity1,entity2): return 0
+    def PrRelationMeasure(self,specific_relation,entity1,entity2):
+        father_type = None
+        for r in self.relations:
+            if r.name == specific_relation and father_type == None:
+                father_type = r.type
+                break # evaluate the type of the concept
+        assert father_type != None,print("Father type of {} not found: {}".format(specific_relation,father_type))
+        se1 = SingleObject(entity1,torch.ones([1]))
+        se2 = SingleObject(entity2,torch.ones([1]))
+        measure_pdf = self.MeasureRelation(father_type,se1,se2)
+        return measure_pdf.probs[measure_pdf.keys.index(specific_relation)]
 
