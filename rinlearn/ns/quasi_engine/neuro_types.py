@@ -6,6 +6,13 @@ import numpy as np
 
 from aluneth.utils import *
 
+class Rint(nn.Module):
+    def __init__(self,value):
+        super().__init__()
+        self.value = value
+    
+    def pdf(self,flag = False):return int(dnp(self.value) + 0.5),self.value
+
 class ObjectSet(nn.Module):
     def __init__(self,features,probs):
         super().__init__()
@@ -13,7 +20,7 @@ class ObjectSet(nn.Module):
         self.features = features
         self.probs = probs
     def object_set(self): return 0
-    def pdf(self): return dnp(self.probs)
+    def pdf(self,flag= False): return dnp(self.probs)
     
 class SingleObject(nn.Module):
     def __init__(self,features,probs,cast=True):
