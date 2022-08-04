@@ -44,6 +44,15 @@ class CMeasureColor(DiffVertex):
 
         return structure.MeasureConcept("color",inputs[0])
 
+class CMeasureRelation(DiffVertex):
+    def __init__(self):
+        super().__init__()
+        self.name = "measure_relation"
+    
+    def prop(self,inputs,structure,context):
+        assert isinstance(context,dict),print("context is not a valid diction.")
+        return structure.MeasureRelation("position",inputs[0],inputs[1])
+
 class CFilterColor(DiffVertex):
     def __init__(self):
         super().__init__()
@@ -78,7 +87,7 @@ class CCount(DiffVertex):
     def prop(self,inputs,structure,context):
         return Rint(torch.sum(inputs[0].probs))
 
-cimps = [CScene(),CMeasureColor(),CUnique(),CFilterColor(),CCount()]
+cimps = [CScene(),CMeasureColor(),CUnique(),CFilterColor(),CCount(),CMeasureRelation()]
 
 # write the executor to execute the program in the context
 context = {"Objects":ObjectSet(torch.randn([3,OBJECT_FEATURE_DIM]),0.999 * torch.ones([3]))}
@@ -88,19 +97,23 @@ program = toFuncNode("count(filter_color('red',scene()))")
 outputs = NORD.execute(program,context)
 print(outputs.pdf(True))
 
+programr = toFuncNode("measure_relation(unique(scene()),unique(scene()))")
+outputsr = NORD.execute(programr,context)
+print(outputsr.pdf(True))
+
 program = toFuncNode("measure_color(unique(scene()))")
 outputs = NORD.execute(program,context)
 print(outputs.pdf(True))
 
-
-
-optim = torch.optim.Adam(clist.parameters(),lr = 2e-2)
+optim = torch.optim.Adam(nn.ModuleList([clist,rlist]).parameters(),lr = 2e-2)
 for epoch in range(100):
     optim.zero_grad()
     outputs = NORD.execute(program,context)
-    loss = 0 - NORD.supervise_prob(outputs,"green")
+    outputsr = NORD.execute(programr,context)
+    loss = 0 - NORD.supervise_prob(outputs,"green") - NORD.supervise_prob(outputsr,"left")
     loss.backward()
     optim.step()
     print("Working Loss: ",dnp(loss))
 
 print(outputs.pdf(True))
+print(outputsr.pdf(True))

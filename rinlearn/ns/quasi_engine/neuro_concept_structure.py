@@ -21,7 +21,7 @@ class ConceptDot(nn.Module):
     def __str__(self):return "concept:{}".format(self.name)
 
 class RelationDot(nn.Module):
-    def __init__(self,name,type,dim = 266):
+    def __init__(self,name,type,dim = 512):
         super().__init__()
         self.name = name
         self.type = type
@@ -95,7 +95,28 @@ class NeuroConceptStructure(nn.Module):
         return scores[concept_values.index(value)]
         
 
-    def MeasureRelation(self,relation,entity1,entity2): return 0
+    def MeasureRelation(self,relation,entity1,entity2):
+        measures = [];mix_probs = []
+        assert torch.abs(torch.sum(entity1.probs)-1)<0.1,print("Not a valid single object 1")
+        assert torch.abs(torch.sum(entity2.probs)-1)<0.1,print("Not a valid single object 2")
+        for i in range(entity1.features.shape[0]):
+            for j in range(entity2.features.shape[0]):
+                e1 = entity1.features[i]
+                e2 = entity2.features[j]
+                mix_probs.append(entity1.probs[i] * entity2.probs[j])
+                scores = []
+                relation_values = []
+                for r in self.relations:
+                    if r.type == relation:
+                        relation_values.append(r.name)
+                        e = torch.cat([e1,e2],0)
+                        scores.append(torch.sigmoid( (torch.cosine_similarity(r.feature,e)-0.2) / 0.15))
+                scores = normalize(torch.cat(scores,0))
+                meas = ConceptMeasurement(relation_values,scores)
+                measures.append(meas)
+        
+
+        return mix_measurements(measures,mix_probs)
 
     def PrRelationMeasure(self,relation,entity1,entity2): return 0
 
