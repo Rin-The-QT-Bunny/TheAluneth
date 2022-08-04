@@ -44,7 +44,6 @@ class CMeasureColor(DiffVertex):
 
         return structure.MeasureConcept("color",inputs[0])
 
-
 class CUnique(DiffVertex):
     def __init__(self):
         super().__init__()
