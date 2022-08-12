@@ -31,3 +31,16 @@ def visualize_images(images,cols = 3):
         plt.subsplot(rows,cols,i + 1)
         plt.imshow(images[i])
     return 0
+
+from aluneth.utils import *
+
+def render_masks(image_data,name="mask_render",mode=None):
+    # (N,4,w,h), (N,1,w,h)
+    # (N,w,h,4), (N,w,h,1)
+    assert isinstance(mode,tuple),print("Display mode is required")
+    N,w,h,c = image_data.shape
+    image_data = dnp(image_data)
+    plt.figure(name)
+    for i in range(N):
+        plt.subplot(mode[0],mode[1],i+1);plt.cla()
+        plt.imshow(image_data[i])
