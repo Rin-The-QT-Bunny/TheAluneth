@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from aluneth.data_structure import *
 
-from neuro_types import *
+from aluneth.rinlearn.ns.quasi_engine.neuro_types import *
 
 class ImplementationNotFound(Exception):
     pass
