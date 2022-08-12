@@ -11,6 +11,7 @@ def dnp(tensor,gpu = False):
     return tensor.detach().numpy()
 
 def progress_bar(count, total, status=''):
+    sys.stdout.flush()
     bar_len = 60
     filled_len = int(round(bar_len * count / float(total)))
 

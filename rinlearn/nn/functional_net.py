@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class FCLayer(nn.Module):
-    def __init__(self, in_features, out_features):
+    def __init__(self, in_features, out_features,outer_most = None):
 
         super().__init__()
         self.net = nn.Sequential(
@@ -11,8 +11,11 @@ class FCLayer(nn.Module):
             #nn.LayerNorm([out_features]),
             nn.Tanh()
         )
+        self.outer_most = outer_most
 
     def forward(self, input):
+        if self.outer_most != None:
+            return self.outer_most(self.net(input))
         return self.net(input)
 
 class SPLayer(nn.Module):
