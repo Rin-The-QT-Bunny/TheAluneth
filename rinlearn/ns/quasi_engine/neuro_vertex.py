@@ -23,10 +23,16 @@ class VertexExecutor(nn.Module):
         self.concept_structure = structure # The basis of implementations
 
     def supervise_prob(self,input,target):
+        #print(input.pdf(True),target)
+        nums = ["0","1","2","3","4","5","6","7","8","9"]
+        target = str(target)
+        if target in nums:
+            target = int(target)
         if isinstance(input,Rint): # prior distribution on real interger
             return torch.sigmoid((0.5 - torch.abs(target - input.value))/0.125)
         if isinstance(input,ConceptMeasurement): # prob of a pure state measurement on the input
             return input.probs[input.keys.index(target)]
+        
         raise UnknownSupervisionType()
         return 
         
@@ -36,13 +42,17 @@ class VertexExecutor(nn.Module):
 
         def retrieve(p,context):
             impl = None
-            curr_name = p.token
+            try:
+                curr_name = p.token
+            except:
+                curr_name = str(p)
+                return curr_name
             for implement in self.implementations:
                 if implement.name == curr_name:
                     impl = implement
             inputs = []
             # look for arguments
-            if p.has_args():
+            if not isinstance(p,str) and p.has_args():
                 for arg in p.children:
                     inputs.append(retrieve(arg,context))
             # locate the implementation by the token name

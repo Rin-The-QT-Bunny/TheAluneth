@@ -89,7 +89,7 @@ class NeuroConceptStructure(nn.Module):
             if c.type == father_type:
                 concept_values.append(c.name)
                 scores.append(torch.sigmoid( (torch.cosine_similarity(c.feature,e)-0.2) / 0.15))
-
+        assert len(scores)>0,print("There is no concept under the category of {}".format(father_type))
         scores = normalize(torch.cat(scores,0))
  
         return scores[concept_values.index(value)]
