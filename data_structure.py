@@ -120,7 +120,7 @@ class FuncNode:
     
     def __str__(self):
         return_str = ""
-        return_str += self.token
+        return_str += self.token + ""
         if (self.function):
             return_str += "("
         for i in range(len(self.children)):
@@ -143,6 +143,8 @@ class FuncNode:
     def add_token(self,token):
         vs = FuncNode(token)
         self.children.append(vs)
+
+    def clear(self):self.children = []
     
     def length(self):
         score = 0
