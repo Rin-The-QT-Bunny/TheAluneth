@@ -32,8 +32,6 @@ def visualize_images(images,cols = 3):
         plt.imshow(images[i])
     return 0
 
-def bbox2image_coords(box_coords)
-
 from aluneth.utils import *
 
 def render_masks(image_data,name="mask_render",mode=None):
