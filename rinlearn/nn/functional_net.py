@@ -65,6 +65,7 @@ class FCBlock(nn.Module):
     def forward(self, input):
         return self.net(input)
 
+
 class ControlledConvAttention(nn.Module):
     def __init__(self,in_features):
         super().__init__()
