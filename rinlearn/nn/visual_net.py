@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.models import resnet50
+from aluneth.rinlearn.nn.functional_net import *
 
 def double_conv(in_channels, out_channels):
     return nn.Sequential(
@@ -80,7 +81,7 @@ class AttentionNet(nn.Module):
         mask = scope * alpha[:, 0:1]
         new_scope = scope * alpha[:, 1:2]
         return mask, new_scope
-from aluneth.rinlearn.nn.functional_net import *
+
 class EncoderNet(nn.Module):
     def __init__(self, width, height,inchannle = 4,latent_dim = 128):
         super().__init__()
